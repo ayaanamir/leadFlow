@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  /* Modern gradient backgrounds */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  /* Company brand gradients */
+  --gradient-primary: linear-gradient(135deg, #8c52ff 0%, #a855f7 100%);
+  --gradient-secondary: linear-gradient(135deg, #8c52ff 0%, #6d28d9 100%);
+  --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
   
   /* Light mode colors - Modern SaaS palette */
   --background: hsl(0, 0%, 100%);
@@ -21,9 +21,9 @@
   --popover: hsl(0, 0%, 100%);
   --popover-foreground: hsl(222, 47%, 11%);
 
-  --primary: hsl(243, 75%, 59%);
+  --primary: hsl(263, 100%, 66%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --primary-hover: hsl(243, 75%, 54%);
+  --primary-hover: hsl(263, 100%, 61%);
 
   --secondary: hsl(220, 20%, 97%);
   --secondary-foreground: hsl(222, 47%, 11%);
@@ -32,7 +32,7 @@
   --muted: hsl(220, 20%, 97%);
   --muted-foreground: hsl(215, 16%, 47%);
 
-  --accent: hsl(243, 75%, 59%);
+  --accent: hsl(263, 100%, 66%);
   --accent-foreground: hsl(0, 0%, 100%);
 
   --destructive: hsl(0, 84%, 60%);
@@ -40,7 +40,7 @@
 
   --border: hsl(220, 20%, 90%);
   --input: hsl(220, 20%, 90%);
-  --ring: hsl(243, 75%, 59%);
+  --ring: hsl(263, 100%, 66%);
 
   --success: hsl(142, 76%, 36%);
   --warning: hsl(38, 92%, 50%);
@@ -67,9 +67,9 @@
   --popover: hsl(224, 71%, 4%);
   --popover-foreground: hsl(210, 40%, 98%);
 
-  --primary: hsl(243, 75%, 59%);
+  --primary: hsl(263, 100%, 66%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --primary-hover: hsl(243, 75%, 64%);
+  --primary-hover: hsl(263, 100%, 61%);
 
   --secondary: hsl(215, 28%, 17%);
   --secondary-foreground: hsl(210, 40%, 98%);
@@ -78,7 +78,7 @@
   --muted: hsl(215, 28%, 17%);
   --muted-foreground: hsl(215, 20%, 65%);
 
-  --accent: hsl(243, 75%, 59%);
+  --accent: hsl(263, 100%, 66%);
   --accent-foreground: hsl(0, 0%, 100%);
 
   --destructive: hsl(0, 63%, 31%);
@@ -86,7 +86,7 @@
 
   --border: hsl(215, 28%, 17%);
   --input: hsl(215, 28%, 17%);
-  --ring: hsl(243, 75%, 59%);
+  --ring: hsl(263, 100%, 66%);
 
   --success: hsl(142, 71%, 45%);
   --warning: hsl(38, 95%, 56%);
@@ -170,7 +170,7 @@
   }
 
   .button-primary {
-    @apply bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2.5 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply bg-[#8c52ff] hover:bg-[#7c47e5] text-white px-6 py-2.5 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
   }
 
   .metric-card {
