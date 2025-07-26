@@ -1,0 +1,94 @@
+# Lead Generation SaaS Platform
+
+Build a modern lead generation SaaS dashboard with Supabase/ChatGPT-style UI that manages customer-specific n8n automation workflows.
+
+## Core Features:
+
+### 1. Authentication & User Management:
+- Simple email/password registration and login
+- Backend user storage with session management
+- Each user has their own n8n instance connection
+
+### 2. Modern UI Design (Supabase/ChatGPT Style):
+- Clean, professional SaaS interface with sidebar navigation
+- Dark/light mode toggle with system preference detection
+- Responsive design using Tailwind CSS and Headless UI components
+- Inter font, Heroicons, professional color scheme (grays, greens, blues)
+- Collapsible sidebar with: Campaigns, Leads, Analytics, Settings sections
+
+### 3. Campaign Creation (ChatGPT-Style Chat):
+- Full-screen chat interface for creating campaigns
+- "Lead Generation Joe" AI persona guiding conversation
+- Collect: job titles, locations, business types through natural conversation
+- Message bubbles for user/bot interaction
+- Convert conversation to structured parameters for n8n workflows
+
+### 4. Campaign Management Dashboard:
+- Campaign list with status badges: Created → Scraped → Researched → Complete
+- Step-by-step automation control per campaign:
+  - "Run Lead Scraping" button → webhook to leadScraping workflow
+  - "Run Lead Research" button → webhook to leadResearch workflow
+- Real-time status updates and progress indicators
+- Campaign details page with workflow progress visualization
+
+### 5. Lead Data Management:
+- Professional data table displaying scraped leads
+- Columns: Name, Email, Job Title, Company, Location, LinkedIn URL, Status
+- Features: sorting, filtering, search, pagination, row selection
+- Lead actions: Mark as Contacted/Qualified/Not Interested
+- Bulk actions: Export to CSV, select multiple for research
+- Individual lead detail modals
+
+### 6. Main Dashboard:
+- Analytics cards showing: Total leads, Active campaigns, Response rates, Success metrics
+- Email alerts section displaying:
+  - Positive prospect replies needing response
+  - Questions requiring custom answers
+  - Complaints/unsubscribe requests requiring attention
+- Recent activity feed and quick action buttons
+
+### 7. Webhook Integration:
+- API endpoints to receive status updates from customer n8n instances
+- Webhook authentication and user context passing
+- Real-time UI updates via Server-Sent Events
+
+## Technical Stack:
+- Next.js 14 with TypeScript and App Router
+- Tailwind CSS with custom design system
+- Headless UI components and Heroicons
+- Node.js/Express backend API
+- SQLite database (development) / PostgreSQL (production)
+- Real-time updates via Server-Sent Events
+
+## Database Schema:
+```sql
+users (id, email, password_hash, n8n_endpoint, created_at)
+campaigns (id, user_id, name, status, parameters, lead_count, created_at)
+leads (id, campaign_id, name, email, job_title, company, location, linkedin_url, status, contacted, qualified)
+email_alerts (id, user_id, type, subject, sender, requires_response, created_at)
+```
+
+## Key Pages & Components:
+- Responsive sidebar navigation with active states
+- Main dashboard with metric cards and alert notifications
+- Campaign creation chat interface (full-screen)
+- Campaign list and individual campaign detail pages
+- Professional lead management table with advanced filtering
+- Settings and account management pages
+- Login/register forms with modern styling
+
+## Webhook Payload Format:
+```json
+{
+  "user_id": "123",
+  "campaign_id": "456",
+  "action": "lead_scraping",
+  "parameters": {
+    "location": ["sydney+australia"],
+    "business": ["marketing+agency"],
+    "job_title": ["founder"]
+  }
+}
+```
+
+Focus on creating a polished, professional SaaS experience that abstracts away n8n complexity while providing powerful campaign management and lead generation capabilities. The UI should feel as smooth and modern as Supabase dashboard with the conversational ease of ChatGPT.
