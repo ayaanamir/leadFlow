@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// Removed Card import - using custom premium design
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { AlertTriangle, Mail, HelpCircle, CheckCircle } from "lucide-react";
@@ -13,9 +13,9 @@ const alertIcons = {
 };
 
 const alertColors = {
-  complaint: "text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20",
-  question: "text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/20",
-  positive_reply: "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/20",
+  complaint: "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 border-red-200 dark:border-red-800",
+  question: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800",
+  positive_reply: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800",
 };
 
 export function EmailAlerts() {
@@ -61,50 +61,57 @@ export function EmailAlerts() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <AlertTriangle className="w-5 h-5 mr-2 text-red-500" />
-          Urgent Email Alerts
+    <div className="premium-card animate-slide-up">
+      <div className="p-6 border-b border-slate-200/60 dark:border-slate-700/60">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+            <AlertTriangle className="w-5 h-5 mr-2 text-red-500" />
+            Email Alerts
+          </h3>
           {urgentAlerts.length > 0 && (
-            <Badge variant="destructive" className="ml-2">
-              {urgentAlerts.length}
+            <Badge className="bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 px-2 py-1 text-xs font-medium">
+              {urgentAlerts.length} new
             </Badge>
           )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
+        </div>
+      </div>
+      <div className="p-6">
         {urgentAlerts.length === 0 ? (
-          <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-            <Mail className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p>No urgent alerts at the moment</p>
+          <div className="text-center py-8">
+            <div className="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Mail className="w-8 h-8 text-slate-400" />
+            </div>
+            <p className="text-slate-600 dark:text-slate-400 font-medium">All caught up!</p>
+            <p className="text-sm text-slate-500 dark:text-slate-500 mt-1">
+              No urgent alerts at the moment
+            </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-200 dark:divide-slate-700">
+          <div className="space-y-3">
             {urgentAlerts.slice(0, 5).map((alert) => {
               const Icon = alertIcons[alert.type as keyof typeof alertIcons];
               return (
                 <div
                   key={alert.id}
-                  className="p-4 hover:bg-gray-50 dark:hover:bg-slate-700/50 cursor-pointer"
+                  className="group p-4 rounded-lg border border-slate-200/50 dark:border-slate-700/50 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-200 cursor-pointer hover:shadow-sm"
                   onClick={() => markAsReadMutation.mutate(alert.id)}
                 >
                   <div className="flex items-start">
                     <div className="flex-shrink-0">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center border ${
                         alertColors[alert.type as keyof typeof alertColors]
                       }`}>
-                        <Icon className="w-4 h-4" />
+                        <Icon className="w-5 h-5" />
                       </div>
                     </div>
-                    <div className="ml-3 flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    <div className="ml-4 flex-1">
+                      <p className="font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {alert.subject}
                       </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                         From: {alert.sender}
                       </p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">
                         {formatTime(alert.createdAt)}
                       </p>
                     </div>
@@ -114,7 +121,7 @@ export function EmailAlerts() {
             })}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
