@@ -11,6 +11,8 @@ import Dashboard from "@/pages/Dashboard";
 import Campaigns from "@/pages/Campaigns";
 import Leads from "@/pages/Leads";
 import ChatCampaign from "@/pages/ChatCampaign";
+import Analytics from "@/pages/Analytics";
+import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -40,12 +42,12 @@ function Router() {
           <Route path="/chat" component={ChatCampaign} />
           <Route path="/analytics" component={() => (
             <AppLayout>
-              <Dashboard />
+              <Analytics />
             </AppLayout>
           )} />
           <Route path="/settings" component={() => (
             <AppLayout>
-              <Dashboard />
+              <Settings />
             </AppLayout>
           )} />
         </>
