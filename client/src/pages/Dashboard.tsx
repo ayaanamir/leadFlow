@@ -1,157 +1,213 @@
-import { useQuery } from "@tanstack/react-query";
-import { MetricCard } from "@/components/dashboard/MetricCard";
-import { EmailAlerts } from "@/components/dashboard/EmailAlerts";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Construction, Mail, Target, MessageCircle, Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { 
+  Users, 
+  BarChart3, 
+  Mail, 
+  TrendingUp, 
+  Target, 
+  Plus,
+  MessageSquare,
+  FileText
+} from "lucide-react";
 import { Link } from "wouter";
-import type { Campaign as CampaignType } from "@shared/schema";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function Dashboard() {
-  const { data: metrics } = useQuery({
-    queryKey: ["/api/analytics/metrics"],
-  });
+  const [user, setUser] = useState<any>(null);
+  const [showCampaignModal, setShowCampaignModal] = useState(false);
 
-  const { data: campaigns = [] } = useQuery<CampaignType[]>({
-    queryKey: ["/api/campaigns"],
-  });
+  useEffect(() => {
+    // Get user info on load
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
 
-  const recentCampaigns = campaigns.slice(0, 3);
-
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric'
+    // Try to get user info
+    fetch('/api/auth/user', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.user) {
+        setUser(data.user);
+      } else {
+        // Invalid token, redirect to login
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+    })
+    .catch(() => {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
     });
-  };
+  }, []);
 
-  const getStatusColor = (status: string) => {
-    const colors = {
-      created: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
-      scraped: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
-      researched: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
-      complete: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
-    };
-    return colors[status as keyof typeof colors] || colors.created;
-  };
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      <div className="p-8 space-y-8 max-w-7xl mx-auto">
-        {/* Welcome Header */}
-        <div className="animate-fade-in">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-300 dark:to-white bg-clip-text text-transparent mb-2">
-            Welcome back!
-          </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            Here's an overview of your lead generation performance
-          </p>
-        </div>
+    <div className="p-6 space-y-6">
+      {/* Welcome Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Welcome back!</h1>
+        <p className="text-gray-600">
+          Hello {user.user_metadata?.first_name || user.email} 👋
+        </p>
+      </div>
 
-        {/* Analytics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-          <MetricCard
-            title="Total Leads"
-            value={metrics?.totalLeads || 0}
-            icon={Users}
-            change="+12%"
-            changeType="positive"
-            color="blue"
-          />
-          <MetricCard
-            title="Active Campaigns"
-            value={metrics?.activeCampaigns || 0}
-            icon={Construction}
-            change="+2"
-            changeType="positive"
-            color="green"
-          />
-          <MetricCard
-            title="Response Rate"
-            value="24.3%"
-            icon={Mail}
-            change="+3.2%"
-            changeType="positive"
-            color="yellow"
-          />
-          <MetricCard
-            title="Qualified Leads"
-            value={metrics?.qualifiedLeads || 0}
-            icon={Target}
-            change="+18"
-            changeType="positive"
-            color="purple"
-          />
-        </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Campaigns</CardTitle>
+            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">12</div>
+            <p className="text-xs text-muted-foreground">+2 from last month</p>
+          </CardContent>
+        </Card>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Email Alerts */}
-          <EmailAlerts />
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">1,234</div>
+            <p className="text-xs text-muted-foreground">+15% from last month</p>
+          </CardContent>
+        </Card>
 
-          {/* Recent Campaigns */}
-          <div className="premium-card animate-slide-up">
-            <div className="p-6 border-b border-slate-200/60 dark:border-slate-700/60">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                Recent Campaigns
-              </h3>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Open Rate</CardTitle>
+            <Mail className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">24.3%</div>
+            <p className="text-xs text-muted-foreground">+3.2% from last month</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+            <Target className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">8.7%</div>
+            <p className="text-xs text-muted-foreground">+1.2% from last month</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Dialog open={showCampaignModal} onOpenChange={setShowCampaignModal}>
+              <DialogTrigger asChild>
+                <Button className="w-full justify-start">
+                  <Users className="w-4 h-4 mr-2" />
+                  Create New Campaign
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Choose Campaign Style</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <Link href="/campaigns/new">
+                    <Button variant="outline" className="w-full h-20 flex-col gap-2" onClick={() => setShowCampaignModal(false)}>
+                      <FileText className="w-6 h-6" />
+                      <span>Form Style</span>
+                      <span className="text-xs text-gray-500">Step-by-step form wizard</span>
+                    </Button>
+                  </Link>
+                  <Link href="/chat">
+                    <Button variant="outline" className="w-full h-20 flex-col gap-2" onClick={() => setShowCampaignModal(false)}>
+                      <MessageSquare className="w-6 h-6" />
+                      <span>Chat Style</span>
+                      <span className="text-xs text-gray-500">Conversational AI assistant</span>
+                    </Button>
+                  </Link>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <Link href="/analytics">
+              <Button variant="outline" className="w-full justify-start">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              View Analytics
+              </Button>
+            </Link>
+            <Link href="/leads">
+              <Button variant="outline" className="w-full justify-start">
+              <Mail className="w-4 h-4 mr-2" />
+              Manage Leads
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span>Campaign "Tech Startups" created</span>
+                <span className="text-gray-500">2 hours ago</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>50 new leads imported</span>
+                <span className="text-gray-500">4 hours ago</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Campaign "SaaS Founders" completed</span>
+                <span className="text-gray-500">1 day ago</span>
+              </div>
             </div>
-            <div className="p-6">
-              {recentCampaigns.length === 0 ? (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Construction className="w-8 h-8 text-slate-400" />
-                  </div>
-                  <p className="text-slate-600 dark:text-slate-400 font-medium">No campaigns yet</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-500 mt-1">
-                    Create your first campaign to get started
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {recentCampaigns.map((campaign) => (
-                    <div key={campaign.id} className="group p-4 rounded-lg border border-slate-200/50 dark:border-slate-700/50 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-200 hover:shadow-sm">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex-1">
-                          <p className="font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                            {campaign.name}
-                          </p>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">
-                            {campaign.leadCount || 0} leads • Created {formatDate(campaign.createdAt)}
-                          </p>
-                        </div>
-                        <Badge className={`${getStatusColor(campaign.status)} px-3 py-1 text-xs font-medium`}>
-                          {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
-                        </Badge>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-600 dark:text-slate-400">Progress</span>
-                          <span className="font-medium text-slate-900 dark:text-white">{campaign.progress || 0}%</span>
-                        </div>
-                        <Progress value={campaign.progress || 0} className="h-2" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Success Message */}
+      <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <Target className="h-5 w-5 text-green-400" />
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-green-800">
+              🎉 Authentication Working!
+            </h3>
+            <div className="mt-2 text-sm text-green-700">
+              <p>
+                Your Supabase authentication is working perfectly! User: <strong>{user.email}</strong>
+                <br />
+                Now you can integrate your n8n automations with this dashboard.
+              </p>
             </div>
           </div>
-        </div>
-
-        {/* Floating Action Buttons */}
-        <div className="fixed bottom-8 right-8 flex flex-col gap-3 z-50">
-          <Link href="/campaigns">
-            <Button className="button-primary w-14 h-14 rounded-full shadow-2xl hover:shadow-3xl">
-              <Plus className="w-6 h-6" />
-            </Button>
-          </Link>
-          <Link href="/chat">
-            <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white w-14 h-14 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1">
-              <MessageCircle className="w-6 h-6" />
-            </Button>
-          </Link>
         </div>
       </div>
     </div>

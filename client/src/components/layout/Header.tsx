@@ -39,7 +39,7 @@ export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
           </Button>
           
           {/* Create Campaign Button */}
-          <Link href="/chat">
+          <Link href="/campaigns/new">
             <Button className="flex items-center">
               <Plus className="w-4 h-4 mr-2" />
               New Campaign

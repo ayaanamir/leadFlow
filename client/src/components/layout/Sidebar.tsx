@@ -19,7 +19,7 @@ interface SidebarProps {
 }
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: Home },
+  { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Campaigns", href: "/campaigns", icon: Construction },
   { name: "Leads", href: "/leads", icon: Users },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
@@ -107,8 +107,12 @@ export function Sidebar({ open, onOpenChange }: SidebarProps) {
               </p>
             </div>
             <button 
-              onClick={() => window.location.href = '/api/logout'}
+              onClick={() => {
+                localStorage.removeItem('token');
+                window.location.href = '/';
+              }}
               className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+              title="Logout"
             >
               <LogOut className="w-5 h-5" />
             </button>
